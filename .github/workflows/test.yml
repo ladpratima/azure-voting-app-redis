@@ -15,7 +15,7 @@ jobs:
       #     kubelogin --version
       - name: Install cli 
         run: |
-          az aks install-cli
+          sudo az aks install-cli
       - name: Azure login
         id: login
         #uses: azure/login@v1.4.3
