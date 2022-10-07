@@ -18,7 +18,7 @@ spec:
         app: azure-vote-back
     spec:
       nodeSelector:
-        "beta.kubernetes.io/os": linux
+        "kubernetes.io/os": linux
       containers:
       - name: azure-vote-back
         image: mcr.microsoft.com/oss/bitnami/redis:6.0.8
@@ -59,7 +59,7 @@ spec:
         app: azure-vote-front
     spec:
       nodeSelector:
-        "beta.kubernetes.io/os": linux
+        "kubernetes.io/os": linux
       containers:
       - name: azure-vote-front
         image: ladacr.azurecr.io/azuredocs/azure-vote-front:55b7316f7a3371a07fc092031a2409298bbe0d91
