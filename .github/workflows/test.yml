@@ -1,0 +1,40 @@
+name: deploy_name_space
+on: push
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source code 
+        uses: actions/checkout@v3
+      - name: Set up kubelogin for non-interactive login
+        run: |
+          curl -LO https://github.com/Azure/kubelogin/releases/download/v0.0.9/kubelogin-linux-amd64.zip
+          sudo unzip -j kubelogin-linux-amd64.zip -d /usr/local/bin
+          rm -f kubelogin-linux-amd64.zip
+          kubelogin --version
+      - name: Azure login
+        id: login
+        #uses: azure/login@v1.4.3
+        #with:
+          #creds: ${{ secrets.AZURE_CREDENTIALS }}
+        uses: Azure/login@v1
+        with:
+          creds: '{"clientId":"${{ secrets.service_principal }}","clientSecret":"${{ secrets.service_principal_password }}","subscriptionId":"${{ secrets.subscription }}","tenantId":"${{ secrets.tenant }}"}'
+      - name: Set AKS context
+        id: set-context
+        uses: azure/aks-set-context@v3
+        with:
+          resource-group: '${{ secrets.resource_group }}' 
+          cluster-name: '${{ secrets.cluster_name }}'
+          use-kubelogin: 'true'
+      - name: Setup kubectl
+        id: install-kubectl
+        uses: azure/setup-kubectl@v3
+      - name: Deploy to AKS
+        id: deploy-aks
+        uses: Azure/k8s-deploy@v4
+        with:
+          namespace: 'default'
+          manifests: |
+             namespace.yaml
